@@ -5,38 +5,34 @@ session_start();
 $carrinho = $_SESSION['carrinho'] ?? [];
 $total = 0;
 
-// Verificar se houve envio de POST para finalizar o pedido
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Verificar se o campo total_pedido foi enviado e é um número válido
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['total_pedido']) && is_numeric($_POST['total_pedido'])) {
         $total = $_POST['total_pedido'];
 
-        // Inserir o pedido na tabela PEDIDOS
-        $sql = "INSERT INTO PEDIDOS (DATA_HORA, TOTAL, STATUS) VALUES (NOW(), ?, 'Pendente')";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("d", $total);
-
         try {
-            $stmt->execute();
-            $pedido_id = $stmt->insert_id;
+            $conn->begin_transaction();
 
-            // Inserir os itens do pedido na tabela ITENS_PEDIDO
+            $sql_pedido = "INSERT INTO PEDIDOS (DATA_HORA, TOTAL, STATUS) VALUES (NOW(), ?, 'Pendente')";
+            $stmt_pedido = $conn->prepare($sql_pedido);
+            $stmt_pedido->bind_param("d", $total);
+            $stmt_pedido->execute();
+            $pedido_id = $stmt_pedido->insert_id;
+
+            $sql_itens = "INSERT INTO ITENS_PEDIDO (PEDIDO_ID, PRODUTO_NOME, QUANTIDADE, PRECO_UNITARIO) VALUES (?, ?, ?, ?)";
+            $stmt_itens = $conn->prepare($sql_itens);
+
             foreach ($carrinho as $item) {
-                $sql = "INSERT INTO ITENS_PEDIDO (PEDIDO_ID, PRODUTO_NOME, QUANTIDADE, PRECO_UNITARIO) VALUES (?, ?, ?, ?)";
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param("isid", $pedido_id, $item['nome'], $item['quantidade'], $item['preco']);
-                $stmt->execute();
+                $stmt_itens->bind_param("isid", $pedido_id, $item['nome'], $item['quantidade'], $item['preco']);
+                $stmt_itens->execute();
             }
 
-            // Limpar o carrinho após finalizar o pedido
+            $conn->commit();
             unset($_SESSION['carrinho']);
-
-            // Redirecionar para a página de confirmação
             header("Location: confirmacao.php?pedido_id=" . $pedido_id);
             exit();
 
-        } catch (mysqli_sql_exception $e) {
-            // Tratar exceção caso ocorra um erro na execução da query
+        } catch (Exception $e) {
+            $conn->rollback();
             echo "Erro ao finalizar o pedido: " . $e->getMessage();
         }
     } else {
@@ -44,3 +40,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Carrinho de Compras</title>
+</head>
+<body>
+    <h1>Carrinho de Compras</h1>
+
+    <?php if (!empty($carrinho)): ?>
+        <table>
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Preço Unitário</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($carrinho as $item): ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($item['nome']); ?></td>
+                        <td><?php echo $item['quantidade']; ?></td>
+                        <td>R$ <?php echo number_format($item['preco'], 2, ',', '.'); ?></td>
+                        <td>R$ <?php echo number_format($item['quantidade'] * $item['preco'], 2, ',', '.'); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                <tr>
+                    <td colspan="3"><strong>Total</strong></td>
+                    <td><strong>R$ <?php echo number_format($total, 2, ',', '.'); ?></strong></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <form action="carrinho.php" method="post">
+            <input type="hidden" name="total_pedido" value="<?php echo $total; ?>">
+            <button type="submit">Finalizar Pedido</button>
+        </form>
+
+    <?php else: ?>
+        <p>O carrinho está vazio.</p>
+    <?php endif; ?>
+</body>
+</html>

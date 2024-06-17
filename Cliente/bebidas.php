@@ -4,6 +4,23 @@ session_start();
 
 $sql = "SELECT NOME, DESC_PROD, PRECO, FOTO FROM PRODUTOS WHERE TIPO = 'drink'";
 $res = $conn->query($sql);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['quantidade']) && is_array($_POST['quantidade'])) {
+        foreach ($_POST['quantidade'] as $nome => $quantidade) {
+            $quantidade = intval($quantidade);
+            if ($quantidade > 0) {
+                $preco = $_POST['preco'][$nome];
+                $item = [
+                    'nome' => $nome,
+                    'quantidade' => $quantidade,
+                    'preco' => $preco
+                ];
+                $_SESSION['carrinho'][] = $item;
+            }
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -11,42 +28,11 @@ $res = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <title>Cardápio</title>
-    <style>
-        .menu-item {
-            border: 1px solid #ccc;
-            margin-bottom: 10px;
-            padding: 10px;
-            width: 400px;
-        }
-        .menu-item img {
-            max-width: 100%;
-            height: auto;
-        }
-        .menu-item-description {
-            margin-top: 10px;
-        }
-        .quantity-control button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-        .quantity-control span {
-            margin: 0 10px;
-        }
-        .add-to-cart {
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <h1>Cardápio</h1>
-    <form action="carrinho.php" method="post" id="menu-form">
+    <form action="bebidas.php" method="post" id="menu-form">
         <?php if ($res->num_rows > 0): ?>
             <?php while ($row = $res->fetch_assoc()): ?>
                 <div class="menu-item">
@@ -63,6 +49,7 @@ $res = $conn->query($sql);
                             <span id="quantity-<?php echo 'comida' . $row["NOME"]; ?>">0</span>
                             <button type="button" onclick="adjustQuantity('<?php echo 'comida' . $row["NOME"]; ?>', 1)">+</button>
                             <input type="hidden" name="quantidade[<?php echo htmlspecialchars($row["NOME"]); ?>]" id="input-<?php echo 'comida' . htmlspecialchars($row["NOME"]); ?>" value="0">
+                            <input type="hidden" name="preco[<?php echo htmlspecialchars($row["NOME"]); ?>]" value="<?php echo htmlspecialchars($row["PRECO"]); ?>">
                             <button type="button" onclick="addToCart('<?php echo htmlspecialchars($row["NOME"]); ?>', <?php echo htmlspecialchars($row["PRECO"]); ?>)" class="add-to-cart">Adicionar - R$ <?php echo number_format($row["PRECO"], 2, ',', '.'); ?></button>
                         </div>
                     </div>
@@ -75,25 +62,6 @@ $res = $conn->query($sql);
 
     <a href="carrinho.php">Ver Carrinho</a>
 
-    <script>
-        function adjustQuantity(id, amount) {
-            var quantityElement = document.getElementById('quantity-' + id);
-            var inputElement = document.getElementById('input-' + id);
-            var quantity = parseInt(quantityElement.textContent) + amount;
-            if (quantity < 0) quantity = 0;
-            quantityElement.textContent = quantity;
-            inputElement.value = quantity;
-        }
-
-        function addToCart(name, price) {
-            var quantity = document.getElementById('input-' + 'comida' + name).value;
-            if (quantity > 0) {
-                alert(name + ' adicionado ao carrinho por R$ ' + (price * quantity).toFixed(2));
-                document.forms["menu-form"].submit(); // Submeter o formulário
-            } else {
-                alert("Selecione uma quantidade maior que zero.");
-            }
-        }
-    </script>
+    <script src="bebidas.js"></script>
 </body>
 </html>
