@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Cardápio</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="./Css/styles.css">
 </head>
 <body>
     <h1>Cardápio</h1>
@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <?php endif; ?>
     </form>
 
-    <a href="carrinho.php">Ver Carrinho</a>
+    <a href="cardapio.php?page=carrinho">Ver Carrinho</a>
 
     <script src="bebidas.js"></script>
 </body>

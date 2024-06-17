@@ -4,6 +4,23 @@ session_start();
 
 $sql = "SELECT NOME, DESC_PROD, PRECO, FOTO FROM PRODUTOS WHERE TIPO = 'food'";
 $res = $conn->query($sql);
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['quantidade']) && is_array($_POST['quantidade'])) {
+        foreach ($_POST['quantidade'] as $nome => $quantidade) {
+            $quantidade = intval($quantidade);
+            if ($quantidade > 0) {
+                $preco = $_POST['preco'][$nome];
+                $item = [
+                    'nome' => $nome,
+                    'quantidade' => $quantidade,
+                    'preco' => $preco
+                ];
+                $_SESSION['carrinho'][] = $item;
+            }
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -11,52 +28,40 @@ $res = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <title>Cardápio</title>
+    <link rel="stylesheet" href="./Css/styles.css">
 </head>
 <body>
     <h1>Cardápio</h1>
-    <form action="carrinho.php" method="post">
-        <?php
-        if ($res->num_rows > 0) {
-            while ($row = $res->fetch_assoc()) {
-                echo '<div class="menu-item">';
-                if (!empty($row["FOTO"])) {
-                    echo '<img src="data:image/jpeg;base64,' . base64_encode($row["FOTO"]) . '" alt="Imagem do produto">';
-                } else {
-                    echo '<img src="./img/comida.avif" alt="Imagem padrão">';
-                }
-                echo '<div class="menu-item-description">';
-                echo '<p>' . htmlspecialchars($row["NOME"]) . '</p>';
-                echo '<p>' . htmlspecialchars($row["DESC_PROD"]) . '</p>';
-                echo '<div class="quantity-control">';
-                echo '<button type="button" onclick="adjustQuantity(\'comida' . $row["NOME"] . '\', -1)">-</button>';
-                echo '<span id="quantity-comida' . $row["NOME"] . '">0</span>';
-                echo '<button type="button" onclick="adjustQuantity(\'comida' . $row["NOME"] . '\', 1)">+</button>';
-                echo '<input type="hidden" name="quantidade[' . htmlspecialchars($row["NOME"]) . ']" id="input-comida' . htmlspecialchars($row["NOME"]) . '" value="0">';
-                echo '<button type="button" onclick="addToCart(\'' . htmlspecialchars($row["NOME"]) . '\', ' . htmlspecialchars($row["PRECO"]) . ')">Adicionar - R$ ' . number_format($row["PRECO"], 2, ',', '.') . '</button>';
-                echo '</div>';
-                echo '</div>';
-                echo '</div>';
-            }
-        } else {
-            echo "Nenhum produto encontrado.";
-        }
-        ?>
-        <button type="submit">Finalizar Compra</button>
+    <form action="comida.php" method="post" id="menu-form">
+        <?php if ($res->num_rows > 0): ?>
+            <?php while ($row = $res->fetch_assoc()): ?>
+                <div class="menu-item">
+                    <?php if (!empty($row["FOTO"])): ?>
+                        <img src="data:image/jpeg;base64,<?php echo base64_encode($row["FOTO"]); ?>" alt="Imagem do produto">
+                    <?php else: ?>
+                        <img src="./img/comida.avif" alt="Imagem padrão">
+                    <?php endif; ?>
+                    <div class="menu-item-description">
+                        <p><?php echo htmlspecialchars($row["NOME"]); ?></p>
+                        <p><?php echo htmlspecialchars($row["DESC_PROD"]); ?></p>
+                        <div class="quantity-control">
+                            <button type="button" onclick="adjustQuantity('<?php echo 'comida' . $row["NOME"]; ?>', -1)">-</button>
+                            <span id="quantity-<?php echo 'comida' . $row["NOME"]; ?>">0</span>
+                            <button type="button" onclick="adjustQuantity('<?php echo 'comida' . $row["NOME"]; ?>', 1)">+</button>
+                            <input type="hidden" name="quantidade[<?php echo htmlspecialchars($row["NOME"]); ?>]" id="input-<?php echo 'comida' . htmlspecialchars($row["NOME"]); ?>" value="0">
+                            <input type="hidden" name="preco[<?php echo htmlspecialchars($row["NOME"]); ?>]" value="<?php echo htmlspecialchars($row["PRECO"]); ?>">
+                            <button type="button" onclick="addToCart('<?php echo htmlspecialchars($row["NOME"]); ?>', <?php echo htmlspecialchars($row["PRECO"]); ?>)" class="add-to-cart">Adicionar - R$ <?php echo number_format($row["PRECO"], 2, ',', '.'); ?></button>
+                        </div>
+                    </div>
+                </div>
+            <?php endwhile; ?>
+        <?php else: ?>
+            <p>Nenhum produto encontrado.</p>
+        <?php endif; ?>
     </form>
 
-    <script>
-        function adjustQuantity(id, amount) {
-            var quantityElement = document.getElementById('quantity-' + id);
-            var inputElement = document.getElementById('input-' + id);
-            var quantity = parseInt(quantityElement.textContent) + amount;
-            if (quantity < 0) quantity = 0;
-            quantityElement.textContent = quantity;
-            inputElement.value = quantity;
-        }
+    <a href="cardapio.php?page=carrinho">Ver Carrinho</a>
 
-        function addToCart(name, price) {
-            alert(name + ' adicionado ao carrinho por R$ ' + price.toFixed(2));
-        }
-    </script>
+    <script src="bebidas.js"></script>
 </body>
 </html>

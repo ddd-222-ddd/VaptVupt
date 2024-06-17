@@ -65,7 +65,7 @@ body {
     bottom: 0;
     width: 100%;
     background-color: #180101; 
-    color: #ffffff; /* texto preto */
+    color: #ffffff; 
     text-align: center;
     padding: 10px;
     box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
@@ -79,3 +79,9 @@ body {
     margin-left: 10px;
     cursor: pointer;
   }
+
+  a{
+   border: 1px solid;
+   display: flex;
+   align-items: center;
+}
