@@ -39,7 +39,7 @@ body {
     max-width: 100%;
   }
   .menu-item-description {
-    margin-top: 10%;
+    margin-top: 5px;
   }
   .quantity-control {
     display: flex;
@@ -78,4 +78,93 @@ body {
     padding: 10px 20px;
     margin-left: 10px;
     cursor: pointer;
+  }
+  @media only screen and (max-width: 390px){
+    .menu-item{
+      width: 100%;
+    }
+  }
+  @media only screen and (min-width: 390px){
+    .menu-item img{
+      width: 65%;
+      display: flex;
+      float: right;
+    }
+  }
+  @media only screen and (min-width: 412px){
+    .menu-item{
+      display: flex;
+    }
+  }
+ 
+  @media only screen and (min-width: 360px){
+    .menu-item{
+      width: 100%;
+        display: flex;
+        float: right;
+    }
+      .menu-item img{
+        width: 50%;
+        display: flex;
+    }
+  }
+  @media only screen and (min-width: 768px){
+.menu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; 
+  justify-content: space-between;
+}
+
+/* Estilo dos itens do menu*/
+.menu-item {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  overflow: hidden;
+  width: 200px; 
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 20px; 
+}
+
+.menu-item img {
+  width: 100%;
+  height: auto;
+}
+
+.menu-item-description {
+  padding: 10px;
+}
+
+.quantity-control {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.quantity-control button {
+  background-color: #580d0d;
+  border: none;
+  color: white;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 20px;
+}
+
+.quantity-control button:hover {
+  background-color: #0056b3;
+}
+
+.quantity-control span {
+  font-size: 16px;
+}
+/* nova */
+
+
   }

@@ -12,6 +12,7 @@
             
                 $sql = "INSERT INTO PRODUTOS (NOME, DESC_PROD, PRECO, TIPO, FOTO) VALUES ('$nome', '$desc_prod', '$preco', '$tipo', '$foto')";
             $res  = $conn->query($sql);
+            
                 if ($res === TRUE) {
                     print "<script>alert('Produto cadastrado com sucesso.');</script>";
                     print "<script>location.href='?page=cadastro-produtos'</script>";

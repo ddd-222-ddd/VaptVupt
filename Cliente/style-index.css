@@ -1,0 +1,155 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html{
+    width: 100vw;
+    height: 100vh;
+    font-size: 62.5%;
+    overflow-x: hidden;
+}
+
+/*MENU*/
+.conteudo {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(214, 23, 23);
+    padding-left: 30rem;
+}
+
+.logo{
+    width: 200px;
+    height: auto;
+    display: flex;
+    align-items: center;
+}
+
+ h3 {
+    color: rgb(35, 233, 28);
+    font-size: 5.0rem;
+    text-transform: uppercase;
+}
+
+.logo img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+}
+
+        .primeira-secao{
+  height: 100vh;
+  background-image: linear-gradient(rgba(29,29,29,0.8),rgba(29,29,29,0.8)) ,url(./imagem/ham.avif);
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no repeat;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+/*CONFIGURANDO O CONTEUDO PRINCIPAL DA PRIMEIRA SEÇÃO*/
+.primeira-secao .conteudo-principal{
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+/*CONFIGURANDO O H1 DA PRIMEIRA SEÇÃO*/
+.primeira-secao h1{
+  color: #ffc506;
+  font-size:6.0rem;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+ 
+}
+
+/*CONFIGURANDO O H2 DA PRIMEIRA SEÇÃO*/
+.primeira-secao h2{
+  color: rgb(177, 177, 177);
+  font-size: 3.0rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  margin-bottom: 3.0rem;
+} 
+
+/*CONFIGURANDO OS BOTÕES*/
+.botoes button{
+  width: 230px;
+  height: 60px;
+  cursor: pointer;
+  text-transform: uppercase;
+  background-color: #b11212;
+  border-radius: 10px;
+  color: white;
+  font-weight: 700;
+  margin-top: 5.0rem;
+  transition: all 400ms ease-in;
+}
+
+/*CONFIGURANDO O HOVER DOS BOTÕES*/
+.botoes button:hover {
+  border: 1px solid #ffc506;
+  background-color: transparent;
+  color: #ffc506;
+}
+
+/*CONFIGURANDO A DIV DOS BOTÕES*/
+.botao{
+  width:480px;
+  display:flex;
+  justify-content: space-between;
+}
+
+    /* For screens smaller than 768px (phones) */
+@media only screen and (max-width: 768px) {
+    .conteudo {
+        padding-left: 1rem; /* Adjust padding for smaller screens */
+    }
+    .logo {
+        width: 150px; /* Adjust logo size for smaller screens */
+    }
+    .conteudo .lista-menu {
+        width: 400px; /* Adjust menu width for smaller screens */
+    }
+}
+
+/* For screens smaller than 480px (smaller phones) */
+@media only screen and (max-width: 480px) {
+    .conteudo {
+        padding-left: 0.5rem; /* Further adjust padding for smaller screens */
+    }
+    .logo {
+        width: 120px; /* Further adjust logo size for smaller screens */
+    }
+    .conteudo .lista-menu {
+        width: 300px; /* Further adjust menu width for smaller screens */
+    }
+    .primeira-secao h1 {
+        font-size: 4.0rem; /* Adjust heading size for smaller screens */
+    }
+    .primeira-secao h2 {
+        font-size: 2.0rem; /* Adjust subheading size for smaller screens */
+    }
+    .botoes button {
+        width: 180px; /* Adjust button size for smaller screens */
+        font-size: 0.8rem; /* Adjust button font size for smaller screens */
+    }
+}
+
+/* Add more media queries as needed for other screen sizes */
+
+
+
+
+
+   
+
+    

@@ -1,5 +1,5 @@
 <?php
-$sql = "SELECT * FROM produtos";
+$sql = "SELECT * FROM PRODUTOS";
 $res = $conn->query($sql);
 
 if ($res && $res->num_rows > 0) {
